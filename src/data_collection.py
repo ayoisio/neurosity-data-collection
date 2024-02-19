@@ -10,7 +10,7 @@ from pathlib import Path
 
 class DataCollection:
 
-    def __init__(self, session_duration: int = 30, session_buffer: int = 5, verbose: bool = True):
+    def __init__(self, session_duration: int = 30, session_buffer: int = 10, verbose: bool = True):
         """
         Initialize.
 
