@@ -10,12 +10,13 @@ from pathlib import Path
 
 class DataCollection:
 
-    def __init__(self, session_duration: int = 30, verbose: bool = True):
+    def __init__(self, session_duration: int = 30, session_buffer: int = 5, verbose: bool = True):
         """
         Initialize.
 
         Args:
             session_duration (int): Duration of session in minutes.
+            session_buffer (int): End buffer time in minutes.
             verbose (bool): Verbosity
         """
         load_dotenv()
@@ -25,8 +26,9 @@ class DataCollection:
         self.email = self.prompt_for_env_var("NEUROSITY_EMAIL")
         self.password = self.prompt_for_env_var("NEUROSITY_PASSWORD")
 
-        # Configure session duration
+        # Configure session duration and buffer
         self.session_duration = session_duration
+        self.session_buffer = session_buffer
 
         # Configure output directory
         self.output_session_dir = self.prompt_for_env_var("OUTPUT_SESSION_DIR")
@@ -101,7 +103,9 @@ class DataCollection:
         if hasattr(self.neurosity, method_name):
             callback = self.create_callback(metric)
             unsubscribe = getattr(self.neurosity, method_name)(callback)
-            time.sleep(60 * self.session_duration)  # Keep streaming for the session duration
+
+            # Keep streaming for the session duration
+            time.sleep(60 * (self.session_duration + self.session_buffer))
             unsubscribe()
 
     def subscribe_to_metrics(self):
